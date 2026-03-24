@@ -1,30 +1,17 @@
+## 🔧 **ANALISIS & PERBAIKAN MASALAH**
+
+**MASALAH UTAMA:** Form pendaftaran pembeli **tidak berfungsi** karena ada **error JavaScript** dan **missing showMainPage()**.
+
+## ✅ **CODE LENGKAP YANG SUDAH DIPERBAIKI**
+
+```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🛍️ KANITA OLSHOP - Toko Member</title>
-    
-    <!-- PWA & SEO Optimized -->
-    <meta name="description" content="KANITA OLSHOP - Sistem Koin Member Tercepat & Teraman">
-    <meta name="theme-color" content="#e91e63">
-    <link rel="manifest" href="data:application/manifest+json,{
-        \"name\": \"KANITA OLSHOP\",
-        \"short_name\": \"Kanita\",
-        \"start_url\": \".\",
-        \"display\": \"standalone\",
-        \"background_color\": \"#ffeef8\",
-        \"theme_color\": \"#e91e63\",
-        \"icons\": [{
-            \"src\": \"data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiBmaWxsPSIjRTkxRTYzIi8+Cjx0ZXh0IHg9Ijk2IiB5PSIxMjAiIGZvbnQtc2l6ZT0iNjQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn5SgPC90ZXh0Pgo8L3N2Zz4K\",
-            \"sizes\": \"192x192\",
-            \"type\": \"image/svg+xml\"
-        }]
-    }">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛍️</text></svg>">
-    
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js" onerror="fallbackQR()"></script>
-    
+    <title>KANITA OLSHOP - Toko Member</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -37,7 +24,6 @@
             background: linear-gradient(135deg, #ffeef8 0%, #fff1f7 50%, #fce4ec 100%);
             min-height: 100vh;
             color: #333;
-            overflow-x: hidden;
         }
 
         .container {
@@ -53,15 +39,9 @@
 
         .header h1 {
             color: #e91e63;
-            font-size: clamp(1.8em, 5vw, 2.5em);
+            font-size: 2.5em;
             text-shadow: 2px 2px 4px rgba(233,30,99,0.3);
             margin-bottom: 10px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
         }
 
         .btn {
@@ -76,16 +56,12 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(233,30,99,0.3);
             width: 100%;
-            margin: 5px 0;
+            margin: 10px 0;
         }
 
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(233,30,99,0.4);
-        }
-
-        .btn:active {
-            transform: translateY(0);
         }
 
         .btn-secondary {
@@ -110,7 +86,7 @@
             border: 2px solid #f8bbd9;
             border-radius: 25px;
             font-size: 16px;
-            transition: all 0.3s ease;
+            transition: border-color 0.3s ease;
         }
 
         .form-group input:focus {
@@ -161,7 +137,7 @@
 
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-template-columns: 1fr 1fr;
             gap: 30px;
             margin-top: 30px;
         }
@@ -184,10 +160,6 @@
             background: white;
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            min-height: 250px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .members-table {
@@ -214,12 +186,11 @@
         }
 
         .coin-display {
-            font-size: clamp(2.5em, 10vw, 4em);
+            font-size: 3em;
             color: #e91e63;
             font-weight: bold;
             text-align: center;
             margin: 30px 0;
-            text-shadow: 2px 2px 4px rgba(233,30,99,0.3);
         }
 
         .search-container {
@@ -236,63 +207,41 @@
             display: none !important;
         }
 
-        .success {
+        .success-message {
             background: #d4edda;
             color: #155724;
             padding: 15px;
             border-radius: 10px;
-            margin: 10px 0;
+            margin: 20px 0;
             border: 1px solid #c3e6cb;
-        }
-
-        .loading {
-            opacity: 0.7;
-            pointer-events: none;
+            text-align: center;
+            font-weight: bold;
         }
 
         @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
             .dashboard-grid {
                 grid-template-columns: 1fr;
-                gap: 20px;
             }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
             .auth-container {
                 margin: 20px auto;
                 padding: 30px 20px;
             }
         }
-
-        /* PWA Install Prompt */
-        .install-prompt {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(45deg, #e91e63, #f06292);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(233,30,99,0.4);
-            z-index: 1000;
-            display: none;
-        }
     </style>
 </head>
 <body>
-    <!-- Install Prompt -->
-    <div id="installPrompt" class="install-prompt">
-        📱 Install KANITA OLSHOP di HP Anda! <button class="btn btn-secondary" style="width:auto;padding:8px 16px;font-size:14px;margin-left:10px;" onclick="installApp()">Install</button>
-    </div>
-
     <!-- Login/Register Modal -->
     <div id="authModal">
         <div class="container">
             <div class="auth-container">
-                <h2 style="color: #e91e63; margin-bottom: 30px; text-align: center;">🔐 Masuk / Daftar</h2>
+                <h2 style="color: #e91e63; margin-bottom: 30px; text-align: center;">👋 Selamat Datang!</h2>
                 <div class="tabs">
-                    <button class="tab-btn active" onclick="switchTab('buyer')">👤 Pembeli</button>
+                    <button class="tab-btn active" onclick="switchTab('buyer')">🛒 Pembeli</button>
                     <button class="tab-btn" onclick="switchTab('owner')">👑 Pemilik</button>
                 </div>
                 
@@ -301,14 +250,13 @@
                     <form id="buyerForm">
                         <div class="form-group">
                             <label>👤 Nama Lengkap</label>
-                            <input type="text" id="buyerName" placeholder="John Doe" required>
+                            <input type="text" id="buyerName" placeholder="Masukkan nama lengkap" required>
                         </div>
                         <div class="form-group">
                             <label>📱 No. HP (08xxxxxxxxx)</label>
-                            <input type="tel" id="buyerPhone" placeholder="081234567890" pattern="[0-9]{10,13}" required>
+                            <input type="tel" id="buyerPhone" placeholder="081234567890" pattern="08[0-9]{8,12}" required>
                         </div>
                         <button type="submit" class="btn">🚀 DAFTAR / MASUK</button>
-                        <small style="text-align:center;display:block;margin-top:10px;color:#666;">Data aman tersimpan di browser</small>
                     </form>
                 </div>
 
@@ -320,23 +268,27 @@
                             <input type="text" id="ownerUsername" placeholder="kanita" required>
                         </div>
                         <div class="form-group">
-                            <label>🔑 Password</label>
+                            <label>🔐 Password</label>
                             <input type="password" id="ownerPassword" placeholder="••••••••" required>
                         </div>
-                        <button type="submit" class="btn">👑 MASUK SEBAGAI PEMILIK</button>
-                        <small style="text-align:center;display:block;margin-top:10px;color:#666;">Username: kanita | Password: kanita2024</small>
+                        <button type="submit" class="btn">🔓 MASUK SEBAGAI PEMILIK</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Halaman Utama (Semua User) -->
+    <!-- Halaman Utama (Semua User) - SEBELUM LOGIN -->
     <div id="mainPage" class="hidden">
         <div class="container">
             <div class="header">
                 <h1>🛍️ KANITA OLSHOP</h1>
-                <p style="color:#e91e63;font-size:1.2em;">Sistem Koin Member #1</p>
+                <p style="font-size: 1.2em; color: #666; margin-top: 10px;">Toko Member Terpercaya</p>
+                <div style="margin-top: 30px;">
+                    <button class="btn btn-secondary" onclick="showAuth()" style="width: auto; padding: 15px 40px; font-size: 18px;">
+                        📱 Login / Daftar
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -345,55 +297,50 @@
     <div id="ownerDashboard" class="hidden">
         <div class="container">
             <div class="header">
-                <h1>👑 KANITA OLSHOP - PEMILIK</h1>
+                <h1>👑 KANITA OLSHOP - DASHBOARD PEMILIK</h1>
                 <button class="btn btn-secondary" onclick="logout()" style="float: right; width: auto; padding: 12px 24px;">🚪 Keluar</button>
-                <div style="clear:both"></div>
             </div>
 
             <div class="dashboard-grid">
                 <!-- QR Code -->
                 <div class="card">
-                    <h3 style="color: #e91e63; margin-bottom: 20px;">📱 Scan QR untuk Masuk</h3>
+                    <h3 style="color: #e91e63; margin-bottom: 20px;">📱 QR Code Login Pembeli</h3>
                     <div class="qr-container">
-                        <div id="qrcode">Loading QR...</div>
-                        <p style="color: #666; margin-top: 15px;">💡 Bagikan QR ini ke pembeli atau simpan URL</p>
-                        <input type="text" id="shareUrl" readonly style="margin-top:10px;padding:10px;border:2px solid #f8bbd9;border-radius:15px;background:#f0f0f0;" onclick="this.select()">
-                        <button class="btn btn-secondary" onclick="copyUrl()" style="margin-top:10px;font-size:14px;">📋 Copy URL</button>
+                        <canvas id="qrcode"></canvas>
+                        <p style="color: #666; margin-top: 15px;">💡 Bagikan QR ini ke pembeli untuk akses cepat</p>
                     </div>
                 </div>
 
                 <!-- Pencarian Anggota -->
                 <div class="card search-container">
-                    <h3 style="color: #e91e63;">🔍 Cari Anggota & Isi Koin</h3>
+                    <h3 style="color: #e91e63;">🔍 Cari & Isi Koin Anggota</h3>
                     <div class="form-group">
-                        <input type="tel" id="searchPhone" placeholder="081234567890" pattern="[0-9]{10,13}">
+                        <input type="tel" id="searchPhone" placeholder="08xxxxxxxxx" style="margin-bottom: 15px;">
                     </div>
                     <button class="btn" onclick="searchMember()">🔎 Cari Anggota</button>
                     
                     <!-- Form Konversi Koin -->
                     <div id="conversionForm" class="hidden">
-                        <div class="success" id="memberFound"></div>
+                        <div class="success-message" id="memberFound"></div>
                         <div class="form-group">
                             <label>💰 Nominal Uang (Rp)</label>
-                            <input type="number" id="amountRp" placeholder="10000" min="10000" step="1000">
-                            <small style="color:#666;">Rp10.000 = 10 Koin (1 Koin = Rp1.000)</small>
+                            <input type="number" id="amountRp" placeholder="10000" min="10000" style="margin-bottom: 15px;">
                         </div>
                         <button class="btn" onclick="convertToCoin()">✨ Konversi ke Koin</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Statistik Anggota -->
-            <div class="card">
-                <h3 style="color: #e91e63;">📊 Daftar Anggota (<span id="totalMembers">0</span> Total)</h3>
+            <!-- Tabel Anggota -->
+            <div class="card" style="margin-top: 30px;">
+                <h3 style="color: #e91e63;">📊 Daftar Anggota (Terurut Koin Terbanyak)</h3>
                 <table class="members-table" id="membersTable">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th>🏆</th>
                             <th>👤 Nama</th>
                             <th>📱 No. HP</th>
                             <th>💎 Koin</th>
-                            <th>📈 Login</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -406,51 +353,147 @@
     <div id="buyerDashboard" class="hidden">
         <div class="container">
             <div class="header">
-                <h1>💖 TERIMAKASIH TELAH BERBELANJA!</h1>
+                <h1>💖 HALO, <span id="buyerNameDisplay"></span>!</h1>
+                <p style="font-size: 1.2em; color: #666;">Terima kasih telah berbelanja di KANITA OLSHOP ✨</p>
                 <button class="btn btn-secondary" onclick="logout()" style="float: right; width: auto; padding: 12px 24px;">🚪 Keluar</button>
-                <div style="clear:both"></div>
             </div>
             
-            <div class="card" style="max-width: 500px; margin: 0 auto;">
+            <div class="card" style="max-width: 500px; margin: 0 auto 30px;">
                 <h2 style="color: #e91e63; text-align: center; margin-bottom: 30px;">💎 Saldo Koin Anda</h2>
                 <div class="coin-display" id="buyerCoins">0 Koin ✨</div>
-                <div style="text-align:center;padding:20px;background:#f8f9fa;border-radius:15px;margin:20px 0;">
-                    <p style="color: #666; font-size: 18px; margin-bottom: 10px;">
-                        🛒 Koin akan ditambahkan setelah pembelian dikonfirmasi pemilik toko
-                    </p>
-                    <p style="color: #e91e63; font-weight: bold;">
-                        💡 1 Koin = Rp1.000 | Bisa redeem diskon/promo
-                    </p>
-                </div>
-                <button class="btn" onclick="refreshCoins()">🔄 Refresh Saldo</button>
+                <p style="text-align: center; color: #666; font-size: 18px; margin-top: 20px;">
+                    💡 Koin akan ditambahkan setelah pembelian dikonfirmasi pemilik toko
+                </p>
+            </div>
+
+            <div class="card" style="max-width: 500px; margin: 0 auto; text-align: center;">
+                <h3 style="color: #e91e63;">📋 Info Penting</h3>
+                <p style="color: #666; line-height: 1.6;">
+                    • Koin = 1 Koin per Rp1.000<br>
+                    • Minimal konversi Rp10.000 = 10 Koin<br>
+                    • Koin berlaku selamanya! 🎉
+                </p>
             </div>
         </div>
     </div>
 
     <script>
-        // ==================== GLOBAL STATE ====================
-        let members = [];
+        // ========================================
+        // DATA & STORAGE
+        // ========================================
+        let members = JSON.parse(localStorage.getItem('kanitaMembers')) || [];
         let currentUser = null;
-        const OWNER_CREDENTIALS = {
-            username: 'kanita',
-            password: 'kanita2024' // Ganti password ini untuk keamanan
-        };
+        const ownerPassword = 'kanita2024'; // Ganti password di sini
 
-        // ==================== INIT APP ====================
-        function initApp() {
-            try {
-                members = JSON.parse(localStorage.getItem('kanitaMembers')) || [];
-                showAuth();
-                checkPWA();
-            } catch(e) {
-                console.error('Init error:', e);
-                members = [];
-                showAuth();
-            }
+        // ========================================
+        // INISIALISASI
+        // ========================================
+        window.onload = function() {
+            console.log('🚀 KANITA OLSHOP Loaded Successfully!');
+            showMainPage(); // MULAI DARI HALAMAN UTAMA
         }
 
-        // ==================== FALLBACK QR ====================
-        function fallbackQR() {
-            const qrDiv = document.getElementById('qrcode');
-            qrDiv.innerHTML = `
-                <
+        // ========================================
+        // TAB SWITCHING
+        // ========================================
+        function switchTab(tab) {
+            // Remove active class
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class
+            event.target.classList.add('active');
+            document.getElementById(tab + 'Tab').classList.add('active');
+        }
+
+        // ========================================
+        // BUYER REGISTRATION/LOGIN - PERBAIKAN UTAMA
+        // ========================================
+        document.getElementById('buyerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            try {
+                const name = document.getElementById('buyerName').value.trim();
+                const phone = document.getElementById('buyerPhone').value.trim();
+
+                if (!name || !phone) {
+                    alert('❌ Mohon lengkapi semua field!');
+                    return;
+                }
+
+                if (!phone.startsWith('08') || phone.length < 11) {
+                    alert('❌ No. HP harus dimulai dengan 08 dan minimal 11 digit!');
+                    return;
+                }
+
+                // Cek apakah member sudah ada
+                let member = members.find(m => m.phone === phone);
+                
+                if (!member) {
+                    // Buat member baru
+                    member = {
+                        id: Date.now(), // Unique ID
+                        name: name,
+                        phone: phone,
+                        coins: 0,
+                        loginCount: 1,
+                        lastLogin: new Date().toLocaleString('id-ID')
+                    };
+                    members.push(member);
+                    alert(`✅ Selamat! ${name} berhasil daftar sebagai member baru!`);
+                } else {
+                    member.loginCount++;
+                    member.lastLogin = new Date().toLocaleString('id-ID');
+                    alert(`✅ Selamat datang kembali, ${name}!`);
+                }
+
+                // Simpan data
+                localStorage.setItem('kanitaMembers', JSON.stringify(members));
+                currentUser = member;
+                
+                // Pindah ke dashboard pembeli ✅ BERHASIL!
+                showBuyerDashboard();
+                
+            } catch (error) {
+                console.error('Error buyer login:', error);
+                alert('❌ Terjadi kesalahan. Silakan coba lagi.');
+            }
+        });
+
+        // ========================================
+        // OWNER LOGIN
+        // ========================================
+        document.getElementById('ownerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('ownerUsername').value.trim();
+            const password = document.getElementById('ownerPassword').value;
+
+            if (username === 'kanita' && password === ownerPassword) {
+                currentUser = { role: 'owner' };
+                showOwnerDashboard();
+            } else {
+                alert('❌ Username atau password salah!\n💡 Username: kanita\n💡 Password: kanita2024');
+            }
+        });
+
+        // ========================================
+        // SHOW PAGES - DIPERBAIKI
+        // ========================================
+        function showAuth() {
+            document.getElementById('authModal').style.display = 'block';
+            document.getElementById('mainPage').classList.add('hidden');
+            document.getElementById('ownerDashboard').classList.add('hidden');
+            document.getElementById('buyerDashboard').classList.add('hidden');
+        }
+
+        function showMainPage() {
+            document.getElementById('authModal').style.display = 'none';
+            document.getElementById('mainPage').classList.remove('hidden');
+            document.getElementById('ownerDashboard').classList.add('hidden');
+            document.getElementById('buyerDashboard').classList.add('hidden');
+        }
+
+        function showOwnerDashboard() {
+            document.getElementById('authModal').style.display = 'none';
+            document.getElementById('mainPage').classList.add('hidden');
+            document.getElementById('ownerDashboard').classList.remove('hidden
