@@ -27,6 +27,7 @@
         }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(233,30,99,0.4); }
         .btn-secondary { background: linear-gradient(45deg, #f8bbd9, #ffc1e3); color: #e91e63; }
+        .btn-small { width: auto; padding: 10px 20px; margin: 5px; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #e91e63; }
         .form-group input { 
@@ -45,7 +46,8 @@
         .tab-content.active { display: block; }
         .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px; }
         .card { background: white; padding: 30px; border-radius: 25px; box-shadow: 0 10px 30px rgba(233,30,99,0.15); }
-        #qrcode { margin: 20px 0; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .qr-container { text-align: center; }
+        #qrcodeCanvas { border: 3px solid #f8bbd9; border-radius: 15px; background: white; }
         .members-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         .members-table th, .members-table td { padding: 15px; text-align: left; border-bottom: 1px solid #f8bbd9; }
         .members-table th { background: linear-gradient(45deg, #e91e63, #f06292); color: white; font-weight: bold; }
@@ -54,6 +56,7 @@
         .search-container { position: sticky; top: 20px; background: white; padding: 20px; border-radius: 25px; box-shadow: 0 5px 15px rgba(233,30,99,0.15); margin-bottom: 30px; }
         .success-message { background: #d4edda; color: #155724; padding: 15px; border-radius: 10px; margin: 20px 0; border: 1px solid #c3e6cb; text-align: center; font-weight: bold; }
         .hidden { display: none !important; }
+        .private-login { background: linear-gradient(45deg, #ff4081, #f50057); color: white !important; }
         @media (max-width: 768px) { .dashboard-grid { grid-template-columns: 1fr; } .header h1 { font-size: 2em; } }
     </style>
 </head>
@@ -66,7 +69,7 @@
             <h2 style="color: #e91e63; margin-bottom: 30px; text-align: center;">👋 Selamat Datang!</h2>
             <div class="tabs">
                 <button class="tab-btn active" id="buyerTabBtn">🛒 Pembeli</button>
-                <button class="tab-btn" id="ownerTabBtn">👑 Pemilik</button>
+                <button class="tab-btn" id="ownerTabBtn">👑 Pemilik Toko</button>
             </div>
             
             <!-- BUYER FORM -->
@@ -84,20 +87,23 @@
                 </form>
             </div>
 
-            <!-- OWNER FORM -->
+            <!-- OWNER PRIVATE LOGIN -->
             <div id="ownerTab" class="tab-content">
-                <form id="ownerForm">
-                    <div class="form-group">
-                        <label>👑 Username</label>
-                        <input type="text" id="ownerUsername" placeholder="kanita" required>
-                    </div>
-                    <div class="form-group">
-                        <label>🔐 Password</label>
-                        <input type="password" id="ownerPassword" placeholder="kanita2024" required>
-                    </div>
-                    <button type="submit" class="btn">🔓 MASUK PEMILIK</button>
-                </form>
-            </div>
+                <div class="form-group">
+                    <label>🏪 Nama Toko</label>
+                    <input type="text" id="ownerUsername" placeholder="KANITA OLSHOP" required>
+                </div>
+                <div class="form-group">
+                    <label>🔐 Password Rahasia</label>
+                    <input type="password" id="ownerPassword" placeholder="KANITATHENDY29062009" required>
+                </div>
+                <div style="background: #ffebee; padding: 15px; border-radius: 10px; margin-top: 20px; font-size: 14px; color: #c62828;">
+                    <strong>💡 Login Pemilik:</strong><br>
+                    Nama Toko: <code>KANITA OLSHOP</code><br>
+                    Password: <code>KANITATHENDY29062009</code>
+                </div>
+                <button type="submit" class="btn private-login">🔓 MASUK PEMILIK</button>
+            </form>
         </div>
     </div>
 </div>
@@ -107,7 +113,7 @@
     <div class="container">
         <div class="header">
             <h1>🛍️ KANITA OLSHOP</h1>
-            <p style="font-size: 1.2em; color: #666;">Toko Member Terpercaya</p>
+            <p style="font-size: 1.2em; color: #666;">Toko Member Terpercaya - Scan QR untuk Login Cepat</p>
             <button class="btn btn-secondary" onclick="showAuth()" style="width: auto; padding: 15px 40px; font-size: 18px; display: inline-block;">
                 📱 Login / Daftar
             </button>
@@ -119,39 +125,47 @@
 <div id="ownerDashboard" class="hidden">
     <div class="container">
         <div class="header">
-            <h1>👑 DASHBOARD PEMILIK</h1>
+            <h1>👑 DASHBOARD PEMILIK - KANITA OLSHOP</h1>
             <button class="btn btn-secondary" onclick="logout()" style="float: right; width: auto; padding: 12px 24px;">🚪 Keluar</button>
         </div>
 
         <div class="dashboard-grid">
+            <!-- QR CODE + DOWNLOAD -->
             <div class="card">
-                <h3 style="color: #e91e63;">📱 QR Code Login</h3>
-                <div style="text-align: center;">
-                    <canvas id="qrcodeCanvas" width="200" height="200"></canvas>
-                    <p style="color: #666; margin-top: 15px;">Bagikan ke pembeli</p>
+                <h3 style="color: #e91e63; margin-bottom: 20px;">📱 QR Code Login Pembeli</h3>
+                <div class="qr-container">
+                    <canvas id="qrcodeCanvas" width="250" height="250"></canvas><br>
+                    <button class="btn btn-secondary btn-small" onclick="downloadQR()">💾 Download QR</button>
+                    <p style="color: #666; margin-top: 15px; font-size: 14px;">Bagikan ke WhatsApp / Instagram</p>
                 </div>
             </div>
 
+            <!-- SEARCH MEMBER -->
             <div class="card search-container">
-                <h3 style="color: #e91e63;">🔍 Cari Anggota</h3>
-                <input type="tel" id="searchPhone" placeholder="08xxxxxxxxx" style="width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #f8bbd9; border-radius: 20px;">
-                <button class="btn" onclick="searchMember()">🔎 Cari</button>
+                <h3 style="color: #e91e63;">🔍 Cari & Isi Koin</h3>
+                <div class="form-group">
+                    <input type="tel" id="searchPhone" placeholder="08xxxxxxxxx">
+                </div>
+                <button class="btn" onclick="searchMember()">🔎 Cari Anggota</button>
                 
                 <div id="conversionForm" class="hidden" style="margin-top: 20px;">
                     <div class="success-message" id="memberFound"></div>
                     <div class="form-group">
-                        <label>💰 Nominal (Rp)</label>
+                        <label>💰 Nominal Uang (Rp)</label>
                         <input type="number" id="amountRp" placeholder="10000" min="10000">
                     </div>
-                    <button class="btn" onclick="convertToCoin()">✨ Tambah Koin</button>
+                    <button class="btn" onclick="convertToCoin()">✨ Konversi ke Koin (1Koin=Rp1.000)</button>
                 </div>
             </div>
         </div>
 
+        <!-- MEMBER TABLE - FIXED -->
         <div class="card" style="margin-top: 30px;">
-            <h3 style="color: #e91e63;">📊 Daftar Anggota</h3>
+            <h3 style="color: #e91e63;">📊 STATISTIK ANGGOTA <span style="color:#666;font-size:0.8em;">(Total: <span id="totalMembers">0</span> orang)</span></h3>
             <table class="members-table" id="membersTable">
-                <thead><tr><th>#</th><th>Nama</th><th>HP</th><th>Koin</th></tr></thead>
+                <thead>
+                    <tr><th>🏆</th><th>👤 Nama</th><th>📱 HP</th><th>💎 Koin</th><th>📈 Login</th></tr>
+                </thead>
                 <tbody></tbody>
             </table>
         </div>
@@ -162,13 +176,16 @@
 <div id="buyerDashboard" class="hidden">
     <div class="container">
         <div class="header">
-            <h1>💖 HALO, <span id="buyerNameDisplay"></span>!</h1>
+            <h1>💖 SELAMAT DATANG, <span id="buyerNameDisplay"></span>!</h1>
             <button class="btn btn-secondary" onclick="logout()" style="float: right; width: auto; padding: 12px 24px;">🚪 Keluar</button>
         </div>
         
         <div class="card" style="max-width: 500px; margin: 30px auto;">
-            <h2 style="color: #e91e63; text-align: center;">💎 Saldo Koin</h2>
+            <h2 style="color: #e91e63; text-align: center;">💎 SALDO KOIN ANDA</h2>
             <div class="coin-display" id="buyerCoins">0 Koin ✨</div>
+            <p style="text-align: center; color: #666; font-size: 18px;">
+                Koin akan ditambahkan setelah pembelian dikonfirmasi pemilik toko
+            </p>
         </div>
     </div>
 </div>
@@ -177,56 +194,63 @@
     // GLOBAL VARIABLES
     let members = JSON.parse(localStorage.getItem('kanitaMembers')) || [];
     let currentUser = null;
-    const OWNER_PASSWORD = 'kanita2024';
+    const OWNER_CREDENTIALS = {
+        username: 'KANITA OLSHOP',
+        password: 'KANITATHENDY29062009'
+    };
 
-    // PAGE CONTROL FUNCTIONS
+    // PAGE CONTROL
     function showPage(pageId) {
-        // Hide all pages
-        document.querySelectorAll('#authModal, #mainPage, #ownerDashboard, #buyerDashboard').forEach(page => {
-            page.classList.add('hidden');
-        });
-        // Show target page
+        document.querySelectorAll('#authModal, #mainPage, #ownerDashboard, #buyerDashboard')
+            .forEach(page => page.classList.add('hidden'));
         document.getElementById(pageId).classList.remove('hidden');
     }
 
     function showAuth() { showPage('authModal'); }
     function showMainPage() { showPage('mainPage'); }
-    function showOwnerDashboard() { showPage('ownerDashboard'); initQR(); updateMembersTable(); }
+    function showOwnerDashboard() { 
+        showPage('ownerDashboard'); 
+        initQR(); 
+        updateMembersTable(); 
+    }
     function showBuyerDashboard() { 
         showPage('buyerDashboard'); 
         document.getElementById('buyerNameDisplay').textContent = currentUser.name;
         document.getElementById('buyerCoins').textContent = currentUser.coins + ' Koin ✨';
     }
 
-    // TAB SWITCHING
-    document.getElementById('buyerTabBtn').onclick = () => {
+    // EVENT LISTENERS
+    document.getElementById('buyerTabBtn').onclick = () => switchTab('buyer');
+    document.getElementById('ownerTabBtn').onclick = () => switchTab('owner');
+
+    function switchTab(tab) {
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
         event.target.classList.add('active');
-        document.getElementById('buyerTab').classList.add('active');
-    };
+        document.getElementById(tab + 'Tab').classList.add('active');
+    }
 
-    document.getElementById('ownerTabBtn').onclick = () => {
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-        event.target.classList.add('active');
-        document.getElementById('ownerTab').classList.add('active');
-    };
-
-    // BUYER FORM - 100% FIXED
+    // BUYER REGISTRATION - FIXED
     document.getElementById('buyerForm').onsubmit = function(e) {
         e.preventDefault();
         const name = document.getElementById('buyerName').value.trim();
         const phone = document.getElementById('buyerPhone').value.trim();
 
-        if (!name || !phone) {
-            alert('❌ Isi nama dan nomor HP!');
+        if (!name || !phone || !phone.startsWith('08')) {
+            alert('❌ Nama & No.HP (08...) wajib!');
             return;
         }
 
         let member = members.find(m => m.phone === phone);
         if (!member) {
-            member = { id: Date.now(), name, phone, coins: 0, loginCount: 1 };
+            member = {
+                id: Date.now(),
+                name: name,
+                phone: phone,
+                coins: 0,
+                loginCount: 1,
+                joinDate: new Date().toLocaleDateString('id-ID')
+            };
             members.push(member);
         } else {
             member.loginCount++;
@@ -234,78 +258,65 @@
 
         localStorage.setItem('kanitaMembers', JSON.stringify(members));
         currentUser = member;
-        alert('✅ Login berhasil! Selamat datang ' + name);
+        alert(`✅ Selamat datang ${name}!\nKoin saat ini: ${member.coins}`);
         showBuyerDashboard();
     };
 
-    // OWNER FORM - 100% FIXED
+    // OWNER LOGIN - NEW CREDENTIALS
     document.getElementById('ownerForm').onsubmit = function(e) {
         e.preventDefault();
         const username = document.getElementById('ownerUsername').value.trim();
         const password = document.getElementById('ownerPassword').value;
 
-        if (username === 'kanita' && password === OWNER_PASSWORD) {
+        if (username === OWNER_CREDENTIALS.username && password === OWNER_CREDENTIALS.password) {
             currentUser = { role: 'owner' };
-            alert('✅ Login pemilik berhasil!');
+            alert('✅ Login berhasil! Selamat datang Pemilik KANITA OLSHOP');
             showOwnerDashboard();
         } else {
-            alert('❌ Salah!\nUsername: kanita\nPassword: kanita2024');
+            alert('❌ Login gagal!\n🏪 KANITA OLSHOP\n🔐 KANITATHENDY29062009');
         }
     };
 
-    // OWNER FUNCTIONS
+    // OWNER FUNCTIONS - ALL FIXED
     function initQR() {
-        QRCode.toCanvas(document.getElementById('qrcodeCanvas'), window.location.href, {
-            width: 200, color: { dark: '#e91e63', light: '#fff' }
+        const canvas = document.getElementById('qrcodeCanvas');
+        QRCode.toCanvas(canvas, window.location.href, {
+            width: 250,
+            color: { dark: '#e91e63', light: '#ffffff' },
+            errorCorrectionLevel: 'H'
         });
+    }
+
+    function downloadQR() {
+        const canvas = document.getElementById('qrcodeCanvas');
+        const link = document.createElement('a');
+        link.download = 'KanitaOLShop_QR.png';
+        link.href = canvas.toDataURL();
+        link.click();
+        alert('✅ QR Code terdownload! Bagikan ke WA/IG');
     }
 
     function updateMembersTable() {
         const tbody = document.querySelector('#membersTable tbody');
-        const sorted = [...members].sort((a, b) => b.coins - a.coins);
-        tbody.innerHTML = sorted.map((m, i) => 
-            `<tr><td>${i+1}</td><td>${m.name}</td><td>${m.phone}</td><td style="color:#e91e63;font-weight:bold;">${m.coins}</td></tr>`
-        ).join('');
+        const sortedMembers = [...members].sort((a, b) => b.coins - a.coins || b.loginCount - a.loginCount);
+        
+        tbody.innerHTML = sortedMembers.map((member, index) => `
+            <tr>
+                <td>${index + 1} ${index < 3 ? '🥇🥈🥉'[index] : ''}</td>
+                <td><strong>${member.name}</strong></td>
+                <td>${member.phone}</td>
+                <td style="color:#e91e63;font-weight:bold;font-size:1.1em;">${member.coins}</td>
+                <td>${member.loginCount}x</td>
+            </tr>
+        `).join('');
+
+        document.getElementById('totalMembers').textContent = members.length;
     }
 
     function searchMember() {
         const phone = document.getElementById('searchPhone').value.trim();
         const member = members.find(m => m.phone === phone);
+        
         if (member) {
-            document.getElementById('memberFound').innerHTML = `✅ ${member.name}<br>${member.phone}<br>${member.coins} Koin`;
-            document.getElementById('conversionForm').classList.remove('hidden');
-            window.currentMember = member;
-        } else {
-            alert('❌ Anggota tidak ditemukan!');
-        }
-    }
-
-    function convertToCoin() {
-        const amount = parseInt(document.getElementById('amountRp').value);
-        if (amount >= 10000) {
-            const coins = Math.floor(amount / 1000);
-            window.currentMember.coins += coins;
-            localStorage.setItem('kanitaMembers', JSON.stringify(members));
-            alert(`✅ +${coins} koin untuk ${window.currentMember.name}`);
-            updateMembersTable();
-            document.getElementById('conversionForm').classList.add('hidden');
-        } else {
-            alert('❌ Minimal Rp 10.000!');
-        }
-    }
-
-    function logout() {
-        currentUser = null;
-        document.getElementById('buyerName').value = '';
-        document.getElementById('buyerPhone').value = '';
-        document.getElementById('ownerUsername').value = '';
-        document.getElementById('ownerPassword').value = '';
-        showMainPage();
-    }
-
-    // START APP
-    showMainPage();
-    console.log('✅ KANITA OLSHOP READY!');
-</script>
-</body>
-</html>
+            document.getElementById('memberFound').innerHTML = 
+                `✅ <strong>${member.name
