@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛍️ KANITA OLSHOP - Toko Member</title>
+    
+    <!-- PWA & SEO Optimized -->
+    <meta name="description" content="KANITA OLSHOP - Sistem Koin Member Tercepat & Teraman">
+    <meta name="theme-color" content="#e91e63">
+    <link rel="manifest" href="data:application/manifest+json,{
+        \"name\": \"KANITA OLSHOP\",
+        \"short_name\": \"Kanita\",
+        \"start_url\": \".\",
+        \"display\": \"standalone\",
+        \"background_color\": \"#ffeef8\",
+        \"theme_color\": \"#e91e63\",
+        \"icons\": [{
+            \"src\": \"data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiBmaWxsPSIjRTkxRTYzIi8+Cjx0ZXh0IHg9Ijk2IiB5PSIxMjAiIGZvbnQtc2l6ZT0iNjQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn5SgPC90ZXh0Pgo8L3N2Zz4K\",
+            \"sizes\": \"192x192\",
+            \"type\": \"image/svg+xml\"
+        }]
+    }">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛍️</text></svg>">
+    
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js" onerror="fallbackQR()"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffeef8 0%, #fff1f7 50%, #fce4ec 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #e91e63;
+            font-size: clamp(1.8em, 5vw, 2.5em);
+            text-shadow: 2px 2px 4px rgba(233,30,99,0.3);
+            margin-bottom: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #e91e63, #f06292);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(233,30,99,0.3);
+            width: 100%;
+            margin: 5px 0;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(233,30,99,0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #f8bbd9, #ffc1e3);
+            color: #e91e63;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #e91e63;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #f8bbd9;
+            border-radius: 25px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #e91e63;
+            box-shadow: 0 0 10px rgba(233,30,99,0.2);
+        }
+
+        .auth-container {
+            max-width: 400px;
+            margin: 50px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(233,30,99,0.2);
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 30px;
+            background: #f8bbd9;
+            border-radius: 25px;
+            overflow: hidden;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            background: none;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: #e91e63;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(233,30,99,0.15);
+            height: fit-content;
+        }
+
+        .qr-container {
+            text-align: center;
+        }
+
+        #qrcode {
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .members-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .members-table th,
+        .members-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #f8bbd9;
+        }
+
+        .members-table th {
+            background: linear-gradient(45deg, #e91e63, #f06292);
+            color: white;
+            font-weight: bold;
+        }
+
+        .members-table tr:hover {
+            background: #fff3e0;
+        }
+
+        .coin-display {
+            font-size: clamp(2.5em, 10vw, 4em);
+            color: #e91e63;
+            font-weight: bold;
+            text-align: center;
+            margin: 30px 0;
+            text-shadow: 2px 2px 4px rgba(233,30,99,0.3);
+        }
+
+        .search-container {
+            position: sticky;
+            top: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 25px;
+            box-shadow: 0 5px 15px rgba(233,30,99,0.15);
+            margin-bottom: 30px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border: 1px solid #c3e6cb;
+        }
+
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .auth-container {
+                margin: 20px auto;
+                padding: 30px 20px;
+            }
+        }
+
+        /* PWA Install Prompt */
+        .install-prompt {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(45deg, #e91e63, #f06292);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(233,30,99,0.4);
+            z-index: 1000;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Install Prompt -->
+    <div id="installPrompt" class="install-prompt">
+        📱 Install KANITA OLSHOP di HP Anda! <button class="btn btn-secondary" style="width:auto;padding:8px 16px;font-size:14px;margin-left:10px;" onclick="installApp()">Install</button>
+    </div>
+
+    <!-- Login/Register Modal -->
+    <div id="authModal">
+        <div class="container">
+            <div class="auth-container">
+                <h2 style="color: #e91e63; margin-bottom: 30px; text-align: center;">🔐 Masuk / Daftar</h2>
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab('buyer')">👤 Pembeli</button>
+                    <button class="tab-btn" onclick="switchTab('owner')">👑 Pemilik</button>
+                </div>
+                
+                <!-- Pembeli Tab -->
+                <div id="buyerTab" class="tab-content active">
+                    <form id="buyerForm">
+                        <div class="form-group">
+                            <label>👤 Nama Lengkap</label>
+                            <input type="text" id="buyerName" placeholder="John Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label>📱 No. HP (08xxxxxxxxx)</label>
+                            <input type="tel" id="buyerPhone" placeholder="081234567890" pattern="[0-9]{10,13}" required>
+                        </div>
+                        <button type="submit" class="btn">🚀 DAFTAR / MASUK</button>
+                        <small style="text-align:center;display:block;margin-top:10px;color:#666;">Data aman tersimpan di browser</small>
+                    </form>
+                </div>
+
+                <!-- Pemilik Tab -->
+                <div id="ownerTab" class="tab-content">
+                    <form id="ownerForm">
+                        <div class="form-group">
+                            <label>👑 Username Pemilik</label>
+                            <input type="text" id="ownerUsername" placeholder="kanita" required>
+                        </div>
+                        <div class="form-group">
+                            <label>🔑 Password</label>
+                            <input type="password" id="ownerPassword" placeholder="••••••••" required>
+                        </div>
+                        <button type="submit" class="btn">👑 MASUK SEBAGAI PEMILIK</button>
+                        <small style="text-align:center;display:block;margin-top:10px;color:#666;">Username: kanita | Password: kanita2024</small>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Halaman Utama (Semua User) -->
+    <div id="mainPage" class="hidden">
+        <div class="container">
+            <div class="header">
+                <h1>🛍️ KANITA OLSHOP</h1>
+                <p style="color:#e91e63;font-size:1.2em;">Sistem Koin Member #1</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Pemilik -->
+    <div id="ownerDashboard" class="hidden">
+        <div class="container">
+            <div class="header">
+                <h1>👑 KANITA OLSHOP - PEMILIK</h1>
+                <button class="btn btn-secondary" onclick="logout()" style="float: right; width: auto; padding: 12px 24px;">🚪 Keluar</button>
+                <div style="clear:both"></div>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- QR Code -->
+                <div class="card">
+                    <h3 style="color: #e91e63; margin-bottom: 20px;">📱 Scan QR untuk Masuk</h3>
+                    <div class="qr-container">
+                        <div id="qrcode">Loading QR...</div>
+                        <p style="color: #666; margin-top: 15px;">💡 Bagikan QR ini ke pembeli atau simpan URL</p>
+                        <input type="text" id="shareUrl" readonly style="margin-top:10px;padding:10px;border:2px solid #f8bbd9;border-radius:15px;background:#f0f0f0;" onclick="this.select()">
+                        <button class="btn btn-secondary" onclick="copyUrl()" style="margin-top:10px;font-size:14px;">📋 Copy URL</button>
+                    </div>
+                </div>
+
+                <!-- Pencarian Anggota -->
+                <div class="card search-container">
+                    <h3 style="color: #e91e63;">🔍 Cari Anggota & Isi Koin</h3>
+                    <div class="form-group">
+                        <input type="tel" id="searchPhone" placeholder="081234567890" pattern="[0-9]{10,13}">
+                    </div>
+                    <button class="btn" onclick="searchMember()">🔎 Cari Anggota</button>
+                    
+                    <!-- Form Konversi Koin -->
+                    <div id="conversionForm" class="hidden">
+                        <div class="success" id="memberFound"></div>
+                        <div class="form-group">
+                            <label>💰 Nominal Uang (Rp)</label>
+                            <input type="number" id="amountRp" placeholder="10000" min="10000" step="1000">
+                            <small style="color:#666;">Rp10.000 = 10 Koin (1 Koin = Rp1.000)</small>
+                        </div>
+                        <button class="btn" onclick="convertToCoin()">✨ Konversi ke Koin</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistik Anggota -->
+            <div class="card">
+                <h3 style="color: #e91e63;">📊 Daftar Anggota (<span id="totalMembers">0</span> Total)</h3>
+                <table class="members-table" id="membersTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>👤 Nama</th>
+                            <th>📱 No. HP</th>
+                            <th>💎 Koin</th>
+                            <th>📈 Login</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Halaman Pembeli -->
+    <div id="buyerDashboard" class="hidden">
+        <div class="container">
+            <div class="header">
+                <h1>💖 TERIMAKASIH TELAH BERBELANJA!</h1>
+                <button class="btn btn-secondary" onclick="logout()" style="float: right; width: auto; padding: 12px 24px;">🚪 Keluar</button>
+                <div style="clear:both"></div>
+            </div>
+            
+            <div class="card" style="max-width: 500px; margin: 0 auto;">
+                <h2 style="color: #e91e63; text-align: center; margin-bottom: 30px;">💎 Saldo Koin Anda</h2>
+                <div class="coin-display" id="buyerCoins">0 Koin ✨</div>
+                <div style="text-align:center;padding:20px;background:#f8f9fa;border-radius:15px;margin:20px 0;">
+                    <p style="color: #666; font-size: 18px; margin-bottom: 10px;">
+                        🛒 Koin akan ditambahkan setelah pembelian dikonfirmasi pemilik toko
+                    </p>
+                    <p style="color: #e91e63; font-weight: bold;">
+                        💡 1 Koin = Rp1.000 | Bisa redeem diskon/promo
+                    </p>
+                </div>
+                <button class="btn" onclick="refreshCoins()">🔄 Refresh Saldo</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== GLOBAL STATE ====================
+        let members = [];
+        let currentUser = null;
+        const OWNER_CREDENTIALS = {
+            username: 'kanita',
+            password: 'kanita2024' // Ganti password ini untuk keamanan
+        };
+
+        // ==================== INIT APP ====================
+        function initApp() {
+            try {
+                members = JSON.parse(localStorage.getItem('kanitaMembers')) || [];
+                showAuth();
+                checkPWA();
+            } catch(e) {
+                console.error('Init error:', e);
+                members = [];
+                showAuth();
+            }
+        }
+
+        // ==================== FALLBACK QR ====================
+        function fallbackQR() {
+            const qrDiv = document.getElementById('qrcode');
+            qrDiv.innerHTML = `
+                <
